@@ -56,10 +56,10 @@ app.get('/', (req, res) => {
     res.render('home');
 });
 
-app.get('/campgrounds', async(req, res) => {
+app.get('/campgrounds', catchAsync(async(req, res) => {
     const campgrounds = await Campground.find({});
     res.render('campgrounds/index', {campgrounds});
-});
+}));
 
 app.get('/campgrounds/new', (req, res) => {
     res.render('campgrounds/new');
@@ -104,6 +104,7 @@ app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async (req, res)
 
 app.delete('/campgrounds/:id/reviews/:reviewId', catchAsync(async (req, res) => {
     const {id, reviewId} = req.params;
+    // remove review from array in mongo
     await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
     await Review.findByIdAndDelete(reviewId);
     res.redirect(`/campgrounds/${id}`);
@@ -114,7 +115,7 @@ app.all('*', (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-    const { statusCode = 500} = err;
+    const { statusCode = 500 } = err;
     if(!err.message) err.message = "Oh No! Something went wrong."
     res.status(statusCode).render('error', { err });
 });

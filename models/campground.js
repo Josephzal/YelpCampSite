@@ -17,7 +17,7 @@ const CampgroundSchema = new Schema({
 });
 
 CampgroundSchema.post('findOneAndDelete', async function (doc) {
-    // if campground data exists, remove all reviews
+    // if campground data exists, remove all reviews on deletion
     if(doc){
         await Review.deleteMany({
             _id: {
